@@ -18,7 +18,7 @@ jobs:
       - uses: docker/setup-qemu-action@v3
       - name: check arm64 docker
         run: |
-          docker run -it --rm --platform linux/arm64 arm64v8/debian:bookworm /bin/bash -c 'ls /usr/lib'
+          docker run --rm --platform linux/arm64 arm64v8/debian:bookworm /bin/bash -c 'ls /usr/lib'
       # - uses: pguyot/arm-runner-action@v2
       #   with:
       #     commands: |
