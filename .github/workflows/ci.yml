@@ -20,7 +20,7 @@ jobs:
           commands: |
             sudo apt-get update -y
             sudo apt-get upgrade -y
-            sudo apt-get install -y scons pathelf libnss3-dev git build-essential lzma-dev liblzma-dev
+            sudo apt-get install -y scons patchelf libnss3-dev git build-essential lzma-dev liblzma-dev
             ln -s /usr/lib/aarch64-linux-gnu/libnss_files.so.2 /usr/lib/aarch64-linux-gnu/libnss_files.so
             ln -s /usr/lib/aarch64-linux-gnu/libnss_dns.so.2 /usr/lib/aarch64-linux-gnu/libnss_dns.so
 
