@@ -23,10 +23,10 @@ jobs:
             sudo apt-get install -y scons patchelf libnss3-dev git build-essential lzma-dev liblzma-dev wget
             sudo apt-get install fd-find
             fdfind libnss /
-            # ln -s /usr/lib/aarch64-linux-gnu/libnss_files.so.2 /usr/lib/aarch64-linux-gnu/libnss_files.so
-            # ln -s /usr/lib/aarch64-linux-gnu/libnss_dns.so.2 /usr/lib/aarch64-linux-gnu/libnss_dns.so
+            ln -s /usr/lib/arm-linux-gnueabihf/libnss_files.so.2 /usr/lib/arm-linux-gnueabihf/libnss_files.so
+            ln -s /usr/lib/arm-linux-gnueabihf/libnss_dns.so.2 /usr/lib/arm-linux-gnueabihf/libnss_dns.so
 
-            pushd /root
+            cd /root
             wget https://go.dev/dl/go1.20.12.linux-arm64.tar.gz
             tar xf go1.20.12.linux-arm64.tar.gz
             mv go /go
@@ -34,15 +34,14 @@ jobs:
             wget https://www.python.org/ftp/python/3.9.18/Python-3.9.18.tar.xz
             tar -xf Python-3.9.18.tar.xz
             mv Python-3.9.18 /usr/local/share/python3.9
-            pushd /usr/local/share/python3.9
+            cd /usr/local/share/python3.9
             ./configure --enable-optimizations --enable-shared
             make -j 7
             make altinstall
             ldconfig /usr/local/share/python3.9
             python3.9 -m venv /venv
             source /venv/bin/activate
-            popd
-            popd
+            cd /terraform-provider-b2
 
             make deps
             cd python-bindings
