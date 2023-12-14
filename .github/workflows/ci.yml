@@ -21,7 +21,8 @@ jobs:
             sudo apt-get update -y
             sudo apt-get upgrade -y
             sudo apt-get install -y scons patchelf libnss3-dev git build-essential lzma-dev liblzma-dev
-            ls /usr/lib/aarch64-linux-gnu/libnss*
+            sudo apt-get install find-fd
+            findfd libnss /
             ln -s /usr/lib/aarch64-linux-gnu/libnss_files.so.2 /usr/lib/aarch64-linux-gnu/libnss_files.so
             ln -s /usr/lib/aarch64-linux-gnu/libnss_dns.so.2 /usr/lib/aarch64-linux-gnu/libnss_dns.so
 
