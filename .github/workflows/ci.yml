@@ -105,7 +105,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: docker/setup-qemu-action@v3
-      - docker build -t arm64-builder -f Dockerfile-arm64 . 
+      - name: Build Docker image
+        run: |
+          docker build -t arm64-builder -f Dockerfile-arm64 . 
       - name: Install dependencies
         run: |
           docker run --rm arm64-builder -v .:/work /bin/bash -c "make deps && make build"
