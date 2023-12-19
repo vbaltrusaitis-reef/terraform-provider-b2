@@ -60,13 +60,6 @@ jobs:
             arch: arm64
     steps:
       - uses: actions/checkout@v2
-      - name: Set up QEMU (arm64)
-        if: matrix.os == 'ubuntu-latest' && matrix.arch == 'arm64'
-        uses: docker/setup-qemu-action@v3
-      - name: Create Docker image (arm64)
-        if: matrix.os == 'ubuntu-latest' && matrix.arch == 'arm64'
-        run: |
-          docker build -t arm64-builder . -f Dockerfile-arm64
       - name: Set up Python ${{ env.PYTHON_DEFAULT_VERSION }} (ubuntu-latest)
         if: matrix.os == 'ubuntu-latest'
         uses: deadsnakes/action@v2.1.1
@@ -103,6 +96,23 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: py-terraform-provider-b2-${{ runner.os }}-{{ runner.arch }}
+          path: python-bindings/dist/py-terraform-provider-b2
+          if-no-files-found: error
+          retention-days: 1
+  build-arm64:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: docker/setup-qemu-action@v3
+      - docker build -t arm64-builder -f Dockerfile-arm64 . 
+      - name: Install dependencies
+        run: |
+          docker run --rm arm64-builder -v .:/work /bin/bash -c "make deps && make build"
+      - name: Upload python bindings
+        uses: actions/upload-artifact@v2
+        with:
+          name: py-terraform-provider-b2-ubuntu-latest-arm64
           path: python-bindings/dist/py-terraform-provider-b2
           if-no-files-found: error
           retention-days: 1
