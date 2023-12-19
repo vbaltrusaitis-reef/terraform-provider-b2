@@ -22,6 +22,7 @@ jobs:
         working-directory: python-bindings
         run: |
           docker run --rm --platform linux/arm64 -v .:/work arm64v8/python:3.9-bullseye /bin/bash -c "apt-get update -y && apt-get install scons patchelf libnss3-dev -y && cd /work && make deps && make build"
+          chown ubuntu:ubuntu python-bindings/dist/py-terraform-provider-b2
       - name: Upload python bindings
         uses: actions/upload-artifact@v2
         with:
