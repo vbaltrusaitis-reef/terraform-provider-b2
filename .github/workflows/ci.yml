@@ -13,41 +13,18 @@ env:
 jobs:
   build-linux-arm64-pybindings:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.build.outputs.version }}
     steps:
       - uses: actions/checkout@v2
       - uses: docker/setup-qemu-action@v3
-      - name: check arm64 docker
+      - name: Build python bindings
+        working-directory: python-bindings
         run: |
-          docker run --rm --platform linux/arm64 arm64v8/debian:bookworm /bin/bash -c 'ls /usr/lib'
-      # - uses: pguyot/arm-runner-action@v2
-      #   with:
-      #     commands: |
-      #       sudo apt-get update -y
-      #       sudo apt-get upgrade -y
-      #       sudo apt-get install -y scons patchelf libnss3-dev git build-essential lzma-dev liblzma-dev wget
-      #       sudo apt-get install fd-find
-      #       fdfind libnss /
-      #       ln -s /usr/lib/arm-linux-gnueabihf/libnss_files.so.2 /usr/lib/arm-linux-gnueabihf/libnss_files.so
-      #       ln -s /usr/lib/arm-linux-gnueabihf/libnss_dns.so.2 /usr/lib/arm-linux-gnueabihf/libnss_dns.so
-
-      #       cd /root
-      #       wget https://go.dev/dl/go1.20.12.linux-arm64.tar.gz
-      #       tar xf go1.20.12.linux-arm64.tar.gz
-      #       mv go /go
-      #       export PATH="${PATH}:/go/bin"
-      #       wget https://www.python.org/ftp/python/3.9.18/Python-3.9.18.tar.xz
-      #       tar -xf Python-3.9.18.tar.xz
-      #       mv Python-3.9.18 /usr/local/share/python3.9
-      #       cd /usr/local/share/python3.9
-      #       ./configure --enable-optimizations --enable-shared
-      #       make -j 7
-      #       make altinstall
-      #       ldconfig /usr/local/share/python3.9
-      #       python3.9 -m venv /venv
-      #       source /venv/bin/activate
-      #       cd /terraform-provider-b2
-
-      #       make deps
-      #       cd python-bindings
-      #       make build
-      #     copy_artifact_path: python-bindings/dist/py-terraform-provider-b2
+          docker run -it --rm --platform linux/arm64 -v .:/work arm64v8/python:3.9-bulleye /bin/bash -c "apt-get update -y && apt-get install scons patchelf libnss3-dev -y && cd /work && make deps && make build"
+      - name: Upload python bindings
+        with:
+          name: py-terraform-provider-b2-linux
+          path: python-bindings/dist/py-terraform-provider-b2
+          if-no-files-found: error
+          retention-days: 1
