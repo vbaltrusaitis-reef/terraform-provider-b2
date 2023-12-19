@@ -87,16 +87,18 @@ jobs:
       - name: Install dependencies (arm64)
         if: matrix.arch == 'arm64'
         uses: docker://arm64-builder
-        args: -c |
-          make deps
+        with:
+          args: -c |
+            make deps
       - name: Build the provider
         run: |
           make build
       - name: Build the provider (arm64)
         if: matrix.arch == 'arm64'
         uses: docker://arm64-builder
-        args: -c |
-          make build
+        with:
+          args: -c |
+            make build
       - name: Upload python bindings
         uses: actions/upload-artifact@v2
         with:
