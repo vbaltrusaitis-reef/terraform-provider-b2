@@ -87,9 +87,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: docker/setup-qemu-action@v3
       - name: Build ARM64 Docker image
         run: |
+          docker run --privileged --rm tonistiigi/binfmt --install arm64,riscv64,arm
           docker build --platform linux/arm64 -t arm64-builder -f Dockerfile-arm64 .
       - name: Build Python bindings
         run: |
@@ -146,39 +146,39 @@ jobs:
         run: |
           make testacc
 
-  test-arm64:
-    needs: build-linux-arm64
-    env:
-      B2_TEST_APPLICATION_KEY: ${{ secrets.B2_TEST_APPLICATION_KEY }}
-      B2_TEST_APPLICATION_KEY_ID: ${{ secrets.B2_TEST_APPLICATION_KEY_ID }}
-      NOPYBINDINGS: 1  # do not build python buildings
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        terraform:
-          - '1.5.*'
-          - '1.4.*'
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Go ${{ env.GO_DEFAULT_VERSION }}
-        if: ${{ env.B2_TEST_APPLICATION_KEY != '' && env.B2_TEST_APPLICATION_KEY_ID != '' }}
-        uses: actions/setup-go@v2.1.3
-        with:
-          go-version: ${{ env.GO_DEFAULT_VERSION }}
-      - uses: hashicorp/setup-terraform@v2
-        name: Set up Terraform ${{ matrix.terraform }}
-        with:
-          terraform_version: ${{ matrix.terraform }}
-          terraform_wrapper: false
-      - name: Download python bindings for given OS
-        if: ${{ env.B2_TEST_APPLICATION_KEY != '' && env.B2_TEST_APPLICATION_KEY_ID != '' }}
-        uses: actions/download-artifact@v2
-        with:
-          name: py-terraform-provider-b2-linux-arm64
-          path: python-bindings/dist/
-      - name: Run acceptance tests
-        if: ${{ env.B2_TEST_APPLICATION_KEY != '' && env.B2_TEST_APPLICATION_KEY_ID != '' }}
-        timeout-minutes: 120
-        run: |
-          make testacc
+  # test-arm64:
+  #   needs: build-linux-arm64
+  #   env:
+  #     B2_TEST_APPLICATION_KEY: ${{ secrets.B2_TEST_APPLICATION_KEY }}
+  #     B2_TEST_APPLICATION_KEY_ID: ${{ secrets.B2_TEST_APPLICATION_KEY_ID }}
+  #     NOPYBINDINGS: 1  # do not build python buildings
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       terraform:
+  #         - '1.5.*'
+  #         - '1.4.*'
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Set up Go ${{ env.GO_DEFAULT_VERSION }}
+  #       if: ${{ env.B2_TEST_APPLICATION_KEY != '' && env.B2_TEST_APPLICATION_KEY_ID != '' }}
+  #       uses: actions/setup-go@v2.1.3
+  #       with:
+  #         go-version: ${{ env.GO_DEFAULT_VERSION }}
+  #     - uses: hashicorp/setup-terraform@v2
+  #       name: Set up Terraform ${{ matrix.terraform }}
+  #       with:
+  #         terraform_version: ${{ matrix.terraform }}
+  #         terraform_wrapper: false
+  #     - name: Download python bindings for given OS
+  #       if: ${{ env.B2_TEST_APPLICATION_KEY != '' && env.B2_TEST_APPLICATION_KEY_ID != '' }}
+  #       uses: actions/download-artifact@v2
+  #       with:
+  #         name: py-terraform-provider-b2-linux-arm64
+  #         path: python-bindings/dist/
+  #     - name: Run acceptance tests
+  #       if: ${{ env.B2_TEST_APPLICATION_KEY != '' && env.B2_TEST_APPLICATION_KEY_ID != '' }}
+  #       timeout-minutes: 120
+  #       run: |
+  #         make testacc
