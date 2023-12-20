@@ -138,7 +138,7 @@ jobs:
         if: ${{ env.B2_TEST_APPLICATION_KEY != '' && env.B2_TEST_APPLICATION_KEY_ID != '' }}
         uses: actions/download-artifact@v2
         with:
-          name: py-terraform-provider-b2-${{ runnerosarch.os }}-{{ runner.osarch.arch }}
+          name: py-terraform-provider-b2-${{ runner.osarch.os }}-{{ runner.osarch.arch }}
           path: python-bindings/dist/
       - name: Run acceptance tests
         if: ${{ env.B2_TEST_APPLICATION_KEY != '' && env.B2_TEST_APPLICATION_KEY_ID != '' }}
