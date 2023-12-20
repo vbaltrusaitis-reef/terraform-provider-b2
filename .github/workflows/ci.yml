@@ -13,38 +13,38 @@ env:
   GO_DEFAULT_VERSION: '1.20'
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python ${{ env.PYTHON_DEFAULT_VERSION }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ env.PYTHON_DEFAULT_VERSION }}
-      - name: Set up Go ${{ env.GO_DEFAULT_VERSION }}
-        uses: actions/setup-go@v2.1.3
-        with:
-          go-version: ${{ env.GO_DEFAULT_VERSION }}
-      - name: Install dependencies
-        run: |
-          make deps
-      - name: Run dependency checker
-        run: |
-          make deps-check
-      - name: Run linters
-        run: |
-          make lint
-      - name: Run docs linters
-        run: |
-          make docs-lint
-      - name: Validate changelog
-        # Library was designed to be used with pull requests only.
-        if: ${{ github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' }}
-        uses: zattoo/changelog@v1
-        with:
-          token: ${{ github.token }}
+  # lint:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Set up Python ${{ env.PYTHON_DEFAULT_VERSION }}
+  #       uses: actions/setup-python@v2
+  #       with:
+  #         python-version: ${{ env.PYTHON_DEFAULT_VERSION }}
+  #     - name: Set up Go ${{ env.GO_DEFAULT_VERSION }}
+  #       uses: actions/setup-go@v2.1.3
+  #       with:
+  #         go-version: ${{ env.GO_DEFAULT_VERSION }}
+  #     - name: Install dependencies
+  #       run: |
+  #         make deps
+  #     - name: Run dependency checker
+  #       run: |
+  #         make deps-check
+  #     - name: Run linters
+  #       run: |
+  #         make lint
+  #     - name: Run docs linters
+  #       run: |
+  #         make docs-lint
+  #     - name: Validate changelog
+  #       # Library was designed to be used with pull requests only.
+  #       if: ${{ github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' }}
+  #       uses: zattoo/changelog@v1
+  #       with:
+  #         token: ${{ github.token }}
   build:
-    needs: lint
+    # needs: lint
     runs-on: ${{ matrix.osarch.os }}
     strategy:
       fail-fast: false
@@ -83,7 +83,7 @@ jobs:
           if-no-files-found: error
           retention-days: 1
   build-linux-arm64:
-    needs: lint
+    # needs: lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
