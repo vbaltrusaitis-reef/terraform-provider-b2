@@ -90,7 +90,7 @@ jobs:
       - uses: docker/setup-qemu-action@v3
       - name: Build ARM64 Docker image
         run: |
-          docker build-t arm64-builder -f Dockerfile-arm64 .
+          docker build -t arm64-builder -f Dockerfile-arm64 .
       - name: Build Python bindings
         run: |
           docker run --rm -v .:/work arm64-builder /bin/bash -c "make deps && make build"
