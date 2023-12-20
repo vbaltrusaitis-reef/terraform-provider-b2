@@ -6,8 +6,12 @@ RUN apt-get update -y && apt-get upgrade -y
 RUN apt-get install scons patchelf libnss3-dev -y
 
 COPY --from=golang /usr/local/go /usr/local/go
-ENV PATH="${PATH}:/usr/local/go/bin"
+ENV PATH="${PATH}:/usr/local/go/bin:/root/go/bin"
 
-WORKDIR /work
+# COPY . /work
+# WORKDIR /work
 
-ENTRYPOINT /bin/bash
+# RUN make deps
+# RUN make build
+
+# ENTRYPOINT /bin/bash
