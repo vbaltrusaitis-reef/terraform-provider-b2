@@ -97,6 +97,9 @@ jobs:
       - name: Build Python bindings
         run: |
           docker run --platform linux/arm64 --rm -v .:/work arm64-builder /bin/bash -c "cd python-bindings && make deps && make build"
+          ls -l .
+          ls -l python-bindings
+          ls -l python-bindings/dist
       - name: Upload Python bindings
         uses: actions/upload-artifact@v2
         with:
