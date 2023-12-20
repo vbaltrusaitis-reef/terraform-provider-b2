@@ -87,9 +87,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
       - name: Build ARM64 Docker image
         run: |
-          docker run --privileged --rm tonistiigi/binfmt --install arm64
+          # docker run --privileged --rm tonistiigi/binfmt --install arm64
           docker build --platform linux/arm64 -t arm64-builder -f Dockerfile-arm64 .
       - name: Build Python bindings
         run: |
