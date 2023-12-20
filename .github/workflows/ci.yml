@@ -147,7 +147,7 @@ jobs:
           make testacc
 
   test-arm64:
-    needs: build-arm64
+    needs: build-linux-arm64
     env:
       B2_TEST_APPLICATION_KEY: ${{ secrets.B2_TEST_APPLICATION_KEY }}
       B2_TEST_APPLICATION_KEY_ID: ${{ secrets.B2_TEST_APPLICATION_KEY_ID }}
