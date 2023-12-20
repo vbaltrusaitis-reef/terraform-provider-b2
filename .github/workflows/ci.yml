@@ -89,11 +89,11 @@ jobs:
       - uses: actions/checkout@v2
       - name: Build ARM64 Docker image
         run: |
-          docker run --privileged --rm tonistiigi/binfmt --install arm64,riscv64,arm
+          docker run --privileged --rm tonistiigi/binfmt --install arm64
           docker build --platform linux/arm64 -t arm64-builder -f Dockerfile-arm64 .
       - name: Build Python bindings
         run: |
-          docker run --rm -v .:/work arm64-builder /bin/bash -c "make deps && make build"
+          docker run --platform linux/arm64 --rm -v .:/work arm64-builder /bin/bash -c "make deps && make build"
       - name: Upload Python bindings
         uses: actions/upload-artifact@v2
         with:
