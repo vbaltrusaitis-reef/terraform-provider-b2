@@ -10,6 +10,27 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
+  build-linux-arm64-pybindings:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          platforms: arm64
+      - name: Build ARM64 Docker image
+        run: |
+          docker run --privileged --rm tonistiigi/binfmt --install arm64
+          docker build --platform linux/arm64 -t arm64-builder -f Dockerfile-arm64 .
+      - name: Build Python bindings
+        run: |
+          docker run --platform linux/arm64 --rm -v .:/work arm64-builder /bin/bash -c "make deps && make build"
+          sudo chown runner:docker python-bindings/dist/py-terraform-provider-b2
+      - name: Upload Python bindings
+        uses: actions/upload-artifact@v2
+        with:
+          name: py-terraform-provider-b2-linux-arm64
+          path: python-bindings/dist/py-terraform-provider-b2
+          if-no-files-found: error
+          retention-days: 1
   build-linux-pybindings:
     runs-on: ubuntu-latest
     container:
@@ -89,8 +110,10 @@ jobs:
       - name: Postprocess python bindings
         working-directory: python-bindings/dist
         run: |
-          mv artifacts/py-terraform-provider-b2-linux/py-terraform-provider-b2 py-terraform-provider-b2-linux
-          mv artifacts/py-terraform-provider-b2-darwin/py-terraform-provider-b2 py-terraform-provider-b2-darwin
+          mv artifacts/py-terraform-provider-b2-linux/py-terraform-provider-b2 py-terraform-provider-b2-linux-amd64
+          mv artifacts/py-terraform-provider-b2-linux-arm64/py-terraform-provider-b2 py-terraform-provider-b2-linux-arm64
+          mv artifacts/py-terraform-provider-b2-darwin/py-terraform-provider-b2 py-terraform-provider-b2-darwin-amd64
+          mv artifacts/py-terraform-provider-b2-darwin/py-terraform-provider-b2 py-terraform-provider-b2-darwin-arm-64
       - name: Read the Changelog
         id: read-changelog
         uses: mindsers/changelog-reader-action@v2
