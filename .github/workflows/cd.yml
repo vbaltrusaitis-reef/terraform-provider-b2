@@ -25,9 +25,9 @@ jobs:
           docker run \
             --platform linux/arm64 \
             --rm \
-            --volume .:/terraform-provider-b2
+            --volume .:/terraform-provider-b2 \
             --workdir /terraform-provider-b2/python-bindings \
-            arm64-builder
+            arm64-builder \
             /bin/bash -c "make deps && make build"
           sudo chown runner:docker python-bindings/dist/py-terraform-provider-b2
       - name: Upload Python bindings
