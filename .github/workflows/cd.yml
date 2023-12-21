@@ -22,7 +22,13 @@ jobs:
           docker build --platform linux/arm64 -t arm64-builder -f Dockerfile-arm64 .
       - name: Build Python bindings
         run: |
-          docker run --platform linux/arm64 --rm -v .:/work arm64-builder /bin/bash -c "make deps && make build"
+          docker run \
+            --platform linux/arm64 \
+            --rm \
+            --volume .:/terraform-provider-b2
+            --workdir /terraform-provider-b2/python-bindings \
+            arm64-builder
+            /bin/bash -c "make deps && make build"
           sudo chown runner:docker python-bindings/dist/py-terraform-provider-b2
       - name: Upload Python bindings
         uses: actions/upload-artifact@v2
