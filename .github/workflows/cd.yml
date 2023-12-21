@@ -86,7 +86,7 @@ jobs:
           if-no-files-found: error
           retention-days: 1
   build-and-deploy:
-    needs: [build-linux-pybindings, build-macos-pybindings]
+    needs: [build-linux-pybindings, build-linux-arm64-pybindings, build-macos-pybindings]
     env:
       NOPYBINDINGS: 1  # do not build python buildings
     runs-on: ubuntu-latest
