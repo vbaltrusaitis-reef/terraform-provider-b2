@@ -12,6 +12,8 @@ env:
 jobs:
   build-linux-arm64-pybindings:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.build.outputs.version }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -120,7 +122,7 @@ jobs:
   build-and-deploy:
     needs: [build-linux-arm64-pybindings, build-linux-amd64-pybindings, build-macos-arm64-pybindings, build-macos-amd64-pybindings]
     env:
-      NOPYBINDINGS: 1  # do not build python buildings
+      NOPYBINDINGS: 1  # do not build python bindingss
     runs-on: ubuntu-latest
     outputs:
       upload_url: ${{ steps.create-release.outputs.upload_url }}
@@ -150,7 +152,7 @@ jobs:
         id: read-changelog
         uses: mindsers/changelog-reader-action@v2
         with:
-          version: ${{ needs.build-linux-pybindings.outputs.version }}
+          version: ${{ needs.build-linux-amd64-pybindings.outputs.version }}
       - name: Import GPG key
         id: import_gpg
         uses: paultyng/ghaction-import-gpg@v2.1.0
