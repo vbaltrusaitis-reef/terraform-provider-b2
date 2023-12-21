@@ -37,7 +37,7 @@ jobs:
           path: python-bindings/dist/py-terraform-provider-b2
           if-no-files-found: error
           retention-days: 1
-  build-linux-pybindings:
+  build-linux-amd64-pybindings:
     runs-on: ubuntu-latest
     container:
       image: python:3.9  # can not use ${{ env.PYTHON_DEFAULT_VERSION }} here
@@ -61,11 +61,11 @@ jobs:
       - name: Upload python bindings
         uses: actions/upload-artifact@v2
         with:
-          name: py-terraform-provider-b2-linux
+          name: py-terraform-provider-b2-linux-amd64
           path: python-bindings/dist/py-terraform-provider-b2
           if-no-files-found: error
           retention-days: 1
-  build-macos-pybindings:
+  build-macos-amd64-pybindings:
     runs-on: macos-11
     outputs:
       version: ${{ steps.build.outputs.version }}
@@ -87,12 +87,38 @@ jobs:
       - name: Upload python bindings
         uses: actions/upload-artifact@v2
         with:
-          name: py-terraform-provider-b2-darwin
+          name: py-terraform-provider-b2-darwin-amd64
+          path: python-bindings/dist/py-terraform-provider-b2
+          if-no-files-found: error
+          retention-days: 1
+  build-macos-arm64-pybindings:
+    runs-on: macos-13-xlarge
+    outputs:
+      version: ${{ steps.build.outputs.version }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.10
+      - name: Install dependencies
+        working-directory: python-bindings
+        run: |
+          make deps
+      - name: Build python bindings
+        id: build
+        working-directory: python-bindings
+        run: |
+          make build
+      - name: Upload python bindings
+        uses: actions/upload-artifact@v2
+        with:
+          name: py-terraform-provider-b2-darwin-arm64
           path: python-bindings/dist/py-terraform-provider-b2
           if-no-files-found: error
           retention-days: 1
   build-and-deploy:
-    needs: [build-linux-pybindings, build-linux-arm64-pybindings, build-macos-pybindings]
+    needs: [build-linux-arm64-pybindings, build-linux-amd64-pybindings, build-macos-arm64-pybindings, build-macos-amd64-pybindings]
     env:
       NOPYBINDINGS: 1  # do not build python buildings
     runs-on: ubuntu-latest
@@ -116,10 +142,10 @@ jobs:
       - name: Postprocess python bindings
         working-directory: python-bindings/dist
         run: |
-          mv artifacts/py-terraform-provider-b2-linux/py-terraform-provider-b2 py-terraform-provider-b2-linux-amd64
+          mv artifacts/py-terraform-provider-b2-linux-amd64/py-terraform-provider-b2 py-terraform-provider-b2-linux-amd64
           mv artifacts/py-terraform-provider-b2-linux-arm64/py-terraform-provider-b2 py-terraform-provider-b2-linux-arm64
-          mv artifacts/py-terraform-provider-b2-darwin/py-terraform-provider-b2 py-terraform-provider-b2-darwin-amd64
-          mv artifacts/py-terraform-provider-b2-darwin/py-terraform-provider-b2 py-terraform-provider-b2-darwin-arm-64
+          mv artifacts/py-terraform-provider-b2-darwin-amd64/py-terraform-provider-b2 py-terraform-provider-b2-darwin-amd64
+          mv artifacts/py-terraform-provider-b2-darwin-arm64/py-terraform-provider-b2 py-terraform-provider-b2-darwin-arm64
       - name: Read the Changelog
         id: read-changelog
         uses: mindsers/changelog-reader-action@v2
