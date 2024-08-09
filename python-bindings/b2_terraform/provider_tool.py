@@ -377,11 +377,13 @@ class Bucket(Command):
                 or []
             )
             if allowed_operations:
+
                 def sort_key(allowed_operation):
                     try:
                         return config_allowed_operations.index(allowed_operation)
                     except ValueError:
                         return -1
+
                 allowed_operations.sort(key=sort_key)
 
 
