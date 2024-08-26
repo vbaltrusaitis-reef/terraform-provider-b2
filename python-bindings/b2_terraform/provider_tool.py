@@ -367,7 +367,7 @@ class Bucket(Command):
 
     def _order_allowed_operations(self, cors_rules, config_cors_rules):
         # B2 does not necessarily return allowed_operations in the same order as they were set.
-        # This can cause cause unnecessary diffs in the Terraform state.
+        # This can cause unnecessary diffs in the Terraform state.
         # In order to avoid this, we sort the allowed_operations in the same order as they were set.
         for cors_rules_item, config_cors_rules_item in zip(cors_rules, config_cors_rules):
             allowed_operations = cors_rules_item.get('allowed_operations', [])
