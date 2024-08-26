@@ -156,7 +156,7 @@ func resourceB2BucketRead(ctx context.Context, d *schema.ResourceData, meta inte
 
 	input := map[string]interface{}{
 		"bucket_id":  d.Id(),
-		"cors_rules": d.Get("cors_rules").([]interface{}),
+		"cors_rules": d.Get("cors_rules"),
 	}
 
 	output, err := client.apply(name, op, input)
